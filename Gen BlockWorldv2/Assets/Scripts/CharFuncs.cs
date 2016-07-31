@@ -11,7 +11,7 @@ public class CharFuncs : MonoBehaviour {
 	// GameObject this function is tied to!!
 	public GameObject thisChar;
 	public CharacterController thisCharController;
-	string voice;
+	public string voice;
 	
 	//variables for speech
 	System.Diagnostics.Process myProcess;
@@ -22,19 +22,19 @@ public class CharFuncs : MonoBehaviour {
 	int rotateDir; // 1 to turn clockwise, -1 to turn counterclockwise
 	bool rotating; // true if currently rotating
 	//Queue rotateQueue; // if already rotating, additional rotateInfo - stored in Vector2 or GameObject
-	static float rspeed = 50;//30;
+	public static float rspeed = 50;//30;
 	
 	// variables for the move
 	public Vector3 moveTo;
 	public GameObject moveToObj;
 	bool moving;
 	//Queue moveQueue;
-	static float mspeed = 5;
+	public static float mspeed = 5;
 	bool following;
 	public CharFuncs moveToObjFunc;
 	public bool beingfollowed = false;
 	float timer = 0.0f;
-	float timerMax = 2.0f;
+	public static float timerMax = 2.0f;
 	bool left = false; // used for pointing on the left vs right side of character
 	Queue<miniQueueObj> genQueue;
 	
@@ -43,7 +43,7 @@ public class CharFuncs : MonoBehaviour {
 	bool growing = false;
 	GameObject manipObj;
 	GameObject extraObj;
-	static float sspeed = 20f;
+	public static float sspeed = 20f;
 	bool pickup = true;
 	static float carrydropheight = 0.5f;
 	Vector3 curscalesize;
@@ -52,7 +52,7 @@ public class CharFuncs : MonoBehaviour {
 	bool pointing = false;
 	GameObject pointtarget;
 	float pointertimer = 0.0f;
-	float pointertimerMax = 2.0f;
+	public static float pointertimerMax = 2.0f;
 	public GameObject prefabarm;
 	Material armmat;
 	GameObject arm;

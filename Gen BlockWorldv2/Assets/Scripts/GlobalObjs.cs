@@ -19,6 +19,11 @@ public class GlobalObjs : MonoBehaviour
 	GameObject[] templist = null;
 	
 	public static List<CharFuncs> listOfChars = new List<CharFuncs>();
+	public static List<GameObject> listOfCharObj = new List<GameObject>();
+	public static List<GameObject> listOfAllObj = new List<GameObject>();
+	public static List<GameObject> listOfPawnObj = new List<GameObject>();
+	
+	public static List<GameObject> priorityList = new List<GameObject>();
 	
 	public static List<QueueObj> globalQueue = new List<QueueObj>();
 	

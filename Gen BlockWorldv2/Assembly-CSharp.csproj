@@ -56,6 +56,7 @@
      <Compile Include="Assets\Scripts\miniQueueObj.cs" />
      <None Include="Assets\Files\InputFile.txt" />
      <None Include="Assets\Files\miniBMLFile.txt" />
+     <None Include="Assets\Files\HamletCharInit.txt" />
      <None Include="Assets\Files\miniInputFile.txt" />
      <None Include="Assets\Files\BMLFile.txt" />
   </ItemGroup>

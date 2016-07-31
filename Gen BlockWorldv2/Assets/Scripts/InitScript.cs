@@ -1,4 +1,7 @@
 using UnityEngine;
+#if UNITY_EDITOR
+using UnityEditor;
+#endif
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
@@ -7,6 +10,7 @@ using System.Text;
 
 public class InitScript : MonoBehaviour {
 	
+	public static InitScript Instance;
 	//string txtmuch = "45";
 	string txtmuchx = "3";
 	string txtmuchy = "5";
@@ -14,6 +18,10 @@ public class InitScript : MonoBehaviour {
 	string txty = "1";
 	string txtsay = "Your gambols, your songs, your flashes of merriment, that were wont to set the table on a roar? Not one now to mock your own grinning? Quite chop-fallen.  Now get you to my lady's chamber, and tell her, let her paint an inch thick, to this favour she must come. Make her laugh at that.";
 	string txtforward = "3";
+	
+	public GameObject prefabobj;
+	public GameObject prefabchar;
+	public GameObject prefabmark;
 	
 	// for mode dropdowns
 	private Vector2 scrollViewVector = Vector2.zero;
@@ -110,7 +118,17 @@ public class InitScript : MonoBehaviour {
 	
 	static float pauseamt = 0.0f;
 	static float pausemax = 5.0f;
-
+	
+	void Awake() {
+		Instance = this;
+		
+		 #if UNITY_EDITOR
+            Material m = AssetDatabase.LoadAssetAtPath("Assets/Materials/BLUEMat.mat", typeof(Material)) as Material;
+            m = AssetDatabase.LoadAssetAtPath("Assets/Materials/PURPLEMat.mat", typeof(Material)) as Material;
+            m = AssetDatabase.LoadAssetAtPath("Assets/Materials/REDMat.mat", typeof(Material)) as Material;
+            m = AssetDatabase.LoadAssetAtPath("Assets/Materials/GREENMat.mat", typeof(Material)) as Material;
+			#endif
+	}
 	// Use this for initialization
 	void Start () {
 		spacing = heightimg+heighttext+5f;
@@ -1254,51 +1272,257 @@ public class InitScript : MonoBehaviour {
 	}
 	
 	public static void LoadChars() {
-		
-		Debug.Log ("Loading file:" + fullfilelist[fileindexNumber+1]);	
-		// Be sure to check that a file is selected!!!
-		
-		// Read file, then generate pawns and marks and characters & setup global variables
-		charlist = new GameObject[5];
-		charlist[0] = null;
-		charlist[1] = GlobalObjs.Hamlet;
-		charlist[2] = GlobalObjs.Horatio;
-		charlist[3] = GlobalObjs.GraveDigger;
-		charlist[4] = GlobalObjs.GraveDiggerTwo;
-		
-		charlisttext = new string[5];
-		charlisttext[0] = "Choose Character:";
-		for (int i = 1; i < charlist.Length; i++) {
-			charlisttext[i] = charlist[i].name;
-		}
-		
-		targetlist = new GameObject[20];
-		targetlist[0] = null;
-		targetlist[1] = GlobalObjs.Hamlet;
-		targetlist[2] = GlobalObjs.Horatio;
-		targetlist[3] = GlobalObjs.GraveDigger;
-		targetlist[4] = GlobalObjs.GraveDiggerTwo;
-		targetlist[5] = GlobalObjs.Skull1;
-		targetlist[6] = GlobalObjs.Skull2;
-		targetlist[7] = GlobalObjs.Shovel;
-		targetlist[8] = GlobalObjs.Lantern;
-		//targetlist[8] = GlobalObjs.Box;
-		targetlist[9] = GlobalObjs.Audience;
-		targetlist[10] = GlobalObjs.Grave;
-		targetlist[11] = GlobalObjs.StageRight;
-		targetlist[12] = GlobalObjs.CenterBackStage;
-		targetlist[13] = GlobalObjs.Center;
-		targetlist[14] = GlobalObjs.CenterRight;
-		targetlist[15] = GlobalObjs.DownStage;
-		targetlist[16] = GlobalObjs.StageLeft;
-		targetlist[17] = GlobalObjs.Steps;
-		targetlist[18] = GlobalObjs.Stool;
-		targetlist[19] = GlobalObjs.UpStage;
-		
-		targetlisttext = new string[20];
-		targetlisttext[0] = "Choose Target:";
-		for (int i = 1; i < targetlist.Length; i++) {
-			targetlisttext[i] = targetlist[i].name;
+		if (fileindexNumber == 0) {
+			Debug.Log ("ERROR - no file chosen");
+		} else {
+			Debug.Log ("Loading file:" + fullfilelist[fileindexNumber-1]);	
+			// Be sure to check that a file is selected!!!
+			
+			// Read file, then generate pawns and marks and characters & setup global variables
+			// format: Type    Speed    Name    X    Z    R1    R2    R3    R4    Holding    Color    Importance    Voice
+			// Type: C or P or M for type of object - S for speed
+			// Speed: Slow, Med, Fast (only for S)
+			// Name: uppercase name with no spaces
+			// Start X Position
+			// Start Z Position
+			// Rotation 4 components
+			// Holding Object: define prior to the character!!
+			// Color: blue, purple, red, green, yellow, orange, brown, white
+			// Importance: 1 to 8 for chars only saying 1 = highest priority char to lowest - only chars
+			// Voice: Alex, Ralph, Bruce, Fred, more? Kathy, Vicki, Victoria, Agnes, Princess, Junior
+			
+			StreamReader charfile = File.OpenText (fullfilelist[fileindexNumber-1] );
+			string curLine = charfile.ReadLine ();
+			string[] parsedLine = null; 
+			string name = null;
+			float startx;
+			float startz;
+			float rotation1;
+			float rotation2;
+			float rotation3;
+			float rotation4;
+			string objectheld;
+			int priority;
+			Color pcolor;
+			bool success = false;
+			//Debug.Log (curLine);
+			
+			GlobalObjs.priorityList.Capacity = 15;
+			
+			while (curLine != null) { // read each line
+				parsedLine = curLine.Split ('\t');
+				Debug.Log (curLine);
+				Debug.Log (parsedLine[0]);
+				switch (parsedLine[0]) {
+					
+					case "C":
+						// define character
+						name = parsedLine[2];
+						success = float.TryParse (parsedLine[3], out startx);
+						success = float.TryParse (parsedLine[4], out startz);
+						success = float.TryParse (parsedLine[5], out rotation1);
+						success = float.TryParse (parsedLine[6], out rotation2);
+						success = float.TryParse (parsedLine[7], out rotation3); 
+						success = float.TryParse (parsedLine[8], out rotation4);
+						objectheld = parsedLine[9];
+						// set color voice importance
+						// need to know how many people so create right size char array for importance?
+						
+						GameObject person = (GameObject)Instantiate (InitScript.Instance.prefabchar, new Vector3(startx, 0, startz), new Quaternion(rotation1, rotation2, rotation3, rotation4));
+						person.name = name;
+						// get charfuncs & fire pickup if objectheld is defined
+						CharFuncs personfunc = (CharFuncs) person.GetComponent (typeof(CharFuncs));
+						if (objectheld != null && objectheld != "null") {
+							GameObject objfound = GlobalObjs.getObject(objectheld);
+							personfunc.doPickup(objfound);
+						}
+						// set voice
+						personfunc.voice = parsedLine[12];
+						// set material
+						foreach(Material myMaterial in  Resources.FindObjectsOfTypeAll(typeof(Material))) {
+				            //Debug.Log ("Material="+myMaterial.name);
+				            if (myMaterial.name == parsedLine[10]) {
+				                person.renderer.material = myMaterial;
+				                //Debug.Log ("Found "+findWhichMaterialmb1);
+				            }
+						}
+        
+						GlobalObjs.listOfChars.Add (personfunc);
+						GlobalObjs.listOfCharObj.Add(person);
+						GlobalObjs.listOfAllObj.Add(person);
+						// add to priority array
+						success = int.TryParse (parsedLine[11], out priority);
+						
+						// check how big current priorityList is
+						/*if (priority+1 > GlobalObjs.priorityList.Count) {
+							// make bigger & save what is in there now
+							
+						}*/
+					
+						GlobalObjs.priorityList.Insert(priority, person);
+						//person.gameObject.tag = "Person"; // don't need this?
+							
+						Debug.Log ("Created char="+name);
+						break;
+					case "P":
+						// define pawn
+						name = parsedLine[2];
+						success = float.TryParse (parsedLine[3], out startx);
+						success = float.TryParse (parsedLine[4], out startz);
+							
+					
+						GameObject pawn = (GameObject)Instantiate (InitScript.Instance.prefabobj, new Vector3(startx, 0.5f, startz), new Quaternion(0,0,0,0));
+						pawn.name = name;
+						// TODO set material?
+						switch(parsedLine[5]) {
+							case "Blue":
+								pcolor = Color.blue;
+								break;
+							case "Yellow":
+								pcolor = Color.yellow;
+								break;
+							case "Orange":
+								pcolor = new Color(255.0f/255.0f, 153.0f/255.0f, 51.0f/255.0f);
+						Debug.Log ("ORANGE!!!");
+								break;
+							case "Green":
+								pcolor = Color.green;
+						Debug.Log ("GREEN!");
+								break;
+							case "Pink":
+								pcolor = Color.magenta;
+								break;
+							case "Cyan":
+								pcolor = Color.cyan;
+								break;
+							case "Grey":
+							case "Gray":
+								pcolor = Color.gray;
+								break;
+							case "Red":
+								pcolor = Color.red;
+								break;
+							default:
+								pcolor = Color.white;
+								break;
+							
+						}
+					//Debug.Log (parsedLine[5]);
+					pawn.renderer.material.color = pcolor;
+//11					pawn.renderer.material.shader = Shader.Find ("Diffuse");
+						//rend.material.shader = Shader.Find("Specular");
+       // rend.material.SetColor("_SpecColor", Color.red);
+//11						pawn.renderer.material.SetColor("_Color", pcolor);
+//						color = pcolor;
+					
+						
+						GlobalObjs.listOfPawnObj.Add (pawn);
+						GlobalObjs.listOfAllObj.Add (pawn);
+						//pawn.gameObject.tag = "Pawn"; // don't need this?
+						
+						Debug.Log ("Created pawn="+name);
+						break;
+					case "M":
+						// define mark
+						name = parsedLine[2];
+						success = float.TryParse (parsedLine[3], out startx);
+						success = float.TryParse (parsedLine[4], out startz);	
+					
+						GameObject mark = (GameObject)Instantiate (InitScript.Instance.prefabmark, new Vector3(startx, -0.5f, startz), new Quaternion(0,0,0,0));
+						mark.name = name;
+				
+						GlobalObjs.listOfAllObj.Add (mark);
+						//mark.gameObject.tag = "Mark"; // don't need this?
+						mark.renderer.material.color = Color.clear;
+				
+						Debug.Log ("Created mark="+name);
+						break;
+					case "S":
+						// define speed of script
+						switch (parsedLine[1]) {
+							case "Slow": // TODO make slower
+								CharFuncs.mspeed = 5;
+								CharFuncs.timerMax = 2.0f;
+								CharFuncs.rspeed = 50;
+								CharFuncs.sspeed = 20f;
+								CharFuncs.pointertimerMax = 2.0f;
+								break;
+							case "Med":
+								CharFuncs.mspeed = 5;
+								CharFuncs.timerMax = 2.0f;
+								CharFuncs.rspeed = 50;
+								CharFuncs.sspeed = 20f;
+								CharFuncs.pointertimerMax = 2.0f;
+								break;
+							case "Fast": // TODO make faster
+								CharFuncs.mspeed = 5;
+								CharFuncs.timerMax = 2.0f;
+								CharFuncs.rspeed = 50;
+								CharFuncs.sspeed = 20f;
+								CharFuncs.pointertimerMax = 2.0f;
+								break;
+							default:
+								// do nothing
+								break;
+							
+						}
+						
+						Debug.Log ("Set speed="+parsedLine[1]);
+						break;
+					default:
+						// nothing
+						Debug.Log ("ERROR parsing file");
+						break;
+				}
+				
+				
+				curLine = charfile.ReadLine ();
+			}
+			
+			charlist = new GameObject[5];
+			charlist[0] = null;
+			charlist[1] = GlobalObjs.Hamlet;
+			charlist[2] = GlobalObjs.Horatio;
+			charlist[3] = GlobalObjs.GraveDigger;
+			charlist[4] = GlobalObjs.GraveDiggerTwo;
+			
+			charlisttext = new string[5];
+			charlisttext[0] = "Choose Character:";
+			for (int i = 1; i < charlist.Length; i++) {
+				charlisttext[i] = charlist[i].name;
+			}
+			
+			targetlist = new GameObject[20];
+			targetlist[0] = null;
+			targetlist[1] = GlobalObjs.Hamlet;
+			targetlist[2] = GlobalObjs.Horatio;
+			targetlist[3] = GlobalObjs.GraveDigger;
+			targetlist[4] = GlobalObjs.GraveDiggerTwo;
+			targetlist[5] = GlobalObjs.Skull1;
+			targetlist[6] = GlobalObjs.Skull2;
+			targetlist[7] = GlobalObjs.Shovel;
+			targetlist[8] = GlobalObjs.Lantern;
+			//targetlist[8] = GlobalObjs.Box;
+			targetlist[9] = GlobalObjs.Audience;
+			targetlist[10] = GlobalObjs.Grave;
+			targetlist[11] = GlobalObjs.StageRight;
+			targetlist[12] = GlobalObjs.CenterBackStage;
+			targetlist[13] = GlobalObjs.Center;
+			targetlist[14] = GlobalObjs.CenterRight;
+			targetlist[15] = GlobalObjs.DownStage;
+			targetlist[16] = GlobalObjs.StageLeft;
+			targetlist[17] = GlobalObjs.Steps;
+			targetlist[18] = GlobalObjs.Stool;
+			targetlist[19] = GlobalObjs.UpStage;
+			
+			targetlisttext = new string[20];
+			targetlisttext[0] = "Choose Target:";
+			for (int i = 1; i < targetlist.Length; i++) {
+				targetlisttext[i] = targetlist[i].name;
+			}
+			
+			charfile.Close ();
+			GlobalObjs.priorityList.TrimExcess(); // removes blank areas
 		}
 	}
 	
