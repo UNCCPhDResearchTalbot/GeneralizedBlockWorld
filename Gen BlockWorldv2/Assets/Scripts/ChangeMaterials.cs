@@ -33,7 +33,7 @@ public class ChangeMaterials : MonoBehaviour {
         if (!mbody) Debug.Log ("Couldn't find body for "+whichChar);
 
         // calculate the material name to be searched for
-        switch (whichChar) {
+        /*switch (whichChar) {
             case "GraveDigger":
             findWhichMaterial = "PURPLEMat";
             //Debug.Log ("Changed GraveDigger coloring");
@@ -55,7 +55,12 @@ public class ChangeMaterials : MonoBehaviour {
             Debug.Log ("No match!");
             break;
 
-        }
+        }*/
+		
+		// use bodycolor on this object to set findWhichMaterial
+		
+		CharFuncs cf = (CharFuncs) mbody.GetComponent (typeof(CharFuncs));
+		findWhichMaterial = cf.bodycolor;
 
         foreach(Material myMaterial in  Resources.FindObjectsOfTypeAll(typeof(Material))) {
             //Debug.Log ("Material="+myMaterial.name);

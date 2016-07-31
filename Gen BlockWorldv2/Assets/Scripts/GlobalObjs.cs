@@ -8,7 +8,7 @@ using UnityEditor;
 public class GlobalObjs : MonoBehaviour
 {
 	
-	public static GameObject Hamlet = null;
+	/*public static GameObject Hamlet = null;
 	public static CharFuncs HamletFunc = null;
 	public static GameObject Horatio = null;
 	public static CharFuncs HoratioFunc = null;
@@ -16,7 +16,7 @@ public class GlobalObjs : MonoBehaviour
 	public static CharFuncs GraveDiggerFunc = null;
 	public static GameObject GraveDiggerTwo = null;
 	public static CharFuncs GraveDiggerTwoFunc = null;
-	GameObject[] templist = null;
+	GameObject[] templist = null;*/
 	
 	public static List<CharFuncs> listOfChars = new List<CharFuncs>();
 	public static List<GameObject> listOfCharObj = new List<GameObject>();
@@ -28,7 +28,7 @@ public class GlobalObjs : MonoBehaviour
 	public static List<QueueObj> globalQueue = new List<QueueObj>();
 	
 //	public static Queue<QueueObj> globalQueue = new Queue<QueueObj>();
-	public static GameObject Skull1 = null;
+	/*public static GameObject Skull1 = null;
 	public static GameObject Skull2 = null;
 	public static GameObject Shovel = null;
 	public static GameObject Lantern = null;
@@ -43,12 +43,12 @@ public class GlobalObjs : MonoBehaviour
 	public static GameObject StageLeft = null;
 	public static GameObject Steps = null;
 	public static GameObject Stool = null;
-	public static GameObject UpStage = null;
+	public static GameObject UpStage = null;*/
 	
 	
 	// Use this for initialization
 	void Start () {
-		if (Hamlet == null) {
+		/*if (Hamlet == null) {
 			templist = GameObject.FindGameObjectsWithTag("Hamlet");
 			Hamlet = templist[0];
 			HamletFunc = (CharFuncs) Hamlet.GetComponent (typeof(CharFuncs));
@@ -150,7 +150,7 @@ public class GlobalObjs : MonoBehaviour
 			templist = GameObject.FindGameObjectsWithTag ("UpStage");
 			UpStage = templist[0];
 			templist = null;
-		}
+		}*/
 		/*if (Box == null) {
 			templist = GameObject.FindGameObjectsWithTag("Box");
 			for (int i=0; i<templist.Length; i++) {
@@ -162,17 +162,17 @@ public class GlobalObjs : MonoBehaviour
 			templist = null;
 		}*/
 		
-		#if UNITY_EDITOR
+		/*#if UNITY_EDITOR
             Material m = AssetDatabase.LoadAssetAtPath("Assets/Materials/Hamletmat.mat", typeof(Material)) as Material;
             m = AssetDatabase.LoadAssetAtPath("Assets/Materials/Horatiomat.mat", typeof(Material)) as Material;
             m = AssetDatabase.LoadAssetAtPath("Assets/Materials/GraveDiggermat.mat", typeof(Material)) as Material;
             m = AssetDatabase.LoadAssetAtPath("Assets/Materials/GraveDiggerTwomat.mat", typeof(Material)) as Material;
-			#endif
+			#endif*/
 	}
 	
 	// Update is called once per frame
 	void FixedUpdate () {
-		if (Hamlet == null) {
+		/*if (Hamlet == null) {
 			templist = GameObject.FindGameObjectsWithTag("Hamlet");
 			Hamlet = templist[0];
 			HamletFunc = (CharFuncs) Hamlet.GetComponent (typeof(CharFuncs));
@@ -274,7 +274,7 @@ public class GlobalObjs : MonoBehaviour
 			templist = GameObject.FindGameObjectsWithTag ("UpStage");
 			UpStage = templist[0];
 			templist = null;
-		}
+		}*/
 		/*if (Box == null) {
 			templist = GameObject.FindGameObjectsWithTag("Box");
 			for (int i=0; i<templist.Length; i++) {
@@ -295,7 +295,15 @@ public class GlobalObjs : MonoBehaviour
 	}
 	
 	public static GameObject getObject(string name) {
-		name = name.ToLower();
+		name = name.ToUpper();
+		foreach(GameObject g in listOfAllObj) {
+			if(g.name == name) {
+				return g;
+			}
+		}
+		return null;
+		
+		/*
 		//Debug.Log ("Getting object for:"+name);
 		switch (name) {
 		case "hamlet":
@@ -358,11 +366,18 @@ public class GlobalObjs : MonoBehaviour
 		default:
 			return null;
 			break;
-		}
+		}*/
 	}
 	
 	public static CharFuncs getCharFunc(string name) {
-		name = name.ToLower();
+		name = name.ToUpper();
+		foreach(CharFuncs c in listOfChars) {
+			if (c.name == name) {
+				return c;
+			}
+		}
+		return null;
+		/*
 		switch (name) {
 		case "hamlet":
 			return HamletFunc;
@@ -379,12 +394,19 @@ public class GlobalObjs : MonoBehaviour
 		default:
 			return null;
 			break;
-		}
+		}*/
 		
 	}
 	
 	public static CharFuncs getCharFunc(GameObject o) {
-		switch (o.name) {
+		foreach(CharFuncs c in listOfChars) {
+			if (c.name == o.name) {
+				return c;
+			}
+		}
+		return null;
+		
+/*		switch (o.name) {
 		case "Hamlet":
 			return HamletFunc;
 			break;
@@ -400,7 +422,7 @@ public class GlobalObjs : MonoBehaviour
 		default:
 			return null;
 			break;
-		}
+		}*/
 	}
 	
 	public static void removeOne(int which) {
@@ -450,12 +472,49 @@ public class GlobalObjs : MonoBehaviour
 	public static Material getMaterial(string name) {
 		foreach(Material myMaterial in  Resources.FindObjectsOfTypeAll(typeof(Material))) {
             //Debug.Log ("Material="+myMaterial.name);
-            if (myMaterial.name == name+"mat") {
+            if (myMaterial.name == name+"armmat") {
                 return myMaterial;
                 //Debug.Log ("Found "+findWhichMaterialmb1);
             }
         }
 		return null;
 	}
+	
+	public static bool isPawn(GameObject o) {
+		foreach(GameObject g in GlobalObjs.listOfPawnObj) {
+			if (g.name == o.name) {
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	public static bool isPawn(string n) {
+		foreach(GameObject g in GlobalObjs.listOfPawnObj) {
+			if (g.name == n) {
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	public static bool isChar(string n) {
+		foreach(GameObject g in GlobalObjs.listOfCharObj) {
+			if (g.name == n) {
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	public static bool isChar(GameObject o) {
+		foreach(GameObject g in GlobalObjs.listOfCharObj) {
+			if (g.name == o.name) {
+				return true;
+			}
+		}
+		return false;
+	}
+	
 }
 

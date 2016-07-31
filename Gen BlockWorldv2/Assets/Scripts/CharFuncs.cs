@@ -55,8 +55,11 @@ public class CharFuncs : MonoBehaviour {
 	public static float pointertimerMax = 2.0f;
 	public GameObject prefabarm;
 	Material armmat;
+	public string armcolor;
 	GameObject arm;
 	public int pointnum = -1;
+	public string bodycolor;
+	bool bodycolorset = false;
 	
 	// static constants
 	static Vector3 nullVector = new Vector3(0,0,0);
@@ -71,7 +74,11 @@ public class CharFuncs : MonoBehaviour {
 	float stimer = 0.0f;
 	float stimerMin = 3.0f;
 	
-
+	void Awake() {
+		thisChar = gameObject;
+		thisCharController = thisChar.GetComponent<CharacterController>();
+	}
+	
 	// Use this for initialization of vars
 	void Start () {
 		mystyle.normal.textColor = Color.white;
@@ -80,8 +87,9 @@ public class CharFuncs : MonoBehaviour {
 		thisCharController = thisChar.GetComponent<CharacterController>();
 		//speechfunc = (SpeechBubble)thisChar.GetComponent(typeof(SpeechBubble));
 		speaking=false;
-		armmat = GlobalObjs.getMaterial(thisChar.name);
-		switch(this.name) {
+		armmat = GlobalObjs.getMaterial(armcolor);
+		Debug.Log ("voice for "+thisChar.name+" ="+voice+"XX");
+		/*switch(this.name) {
 			case "Hamlet":
 				voice = "Alex";
 				break;
@@ -94,7 +102,10 @@ public class CharFuncs : MonoBehaviour {
 			case "Horatio":
 				voice="Fred";
 				break;
-		}
+		}*/
+		
+		
+		
 		rotateTo = nullVector;
 		rotateToObj = null;
 		rotating = false;
@@ -124,8 +135,9 @@ public class CharFuncs : MonoBehaviour {
 	// Update is called once per frame - when action occurring, do something
 	void Update () {
 		if (armmat == null) {
-			armmat = GlobalObjs.getMaterial(thisChar.name);
+			armmat = GlobalObjs.getMaterial(armcolor);
 		}
+		
 		if (thisCharController == null) {
 			thisCharController = thisChar.GetComponent<CharacterController>();
 		}
@@ -199,6 +211,7 @@ public class CharFuncs : MonoBehaviour {
 			}
 			
 		} else if (shrinking) {
+			Debug.Log ("SHRINKING!!");
 			// scale char down
 			float samt = Mathf.Min (Time.deltaTime*sspeed, thisChar.transform.localScale.y - halfHeight); // so don't go past 10f shrinking
 			
@@ -531,7 +544,8 @@ public class CharFuncs : MonoBehaviour {
 	
 	public void doForward(float amt) { // used only for testing in the UI
 		rotateToObj = null;
-		moveToObj = GlobalObjs.Grave;
+		//moveToObj = GlobalObjs.Grave;
+		moveToObj = GlobalObjs.listOfPawnObj[0];
 		moveTo = calculateObjPostn(moveToObj);
 		moving = true;
 
@@ -569,8 +583,13 @@ public class CharFuncs : MonoBehaviour {
 	}
 	
 	public void doPickup(GameObject obj) {
-		if (obj.name.ToLower() != "skull1" && obj.name.ToLower() != "skull2" && obj.name.ToLower() != "lantern" && obj.name.ToLower () != "shovel") {
+		Debug.Log ("picking up "+obj.name);
+		// need to check against all pawns
+		
+		if (!GlobalObjs.isPawn(obj)) {
+//		if (obj.name.ToLower() != "skull1" && obj.name.ToLower() != "skull2" && obj.name.ToLower() != "lantern" && obj.name.ToLower () != "shovel") {
 			// not valid command - ignore
+			Debug.Log ("bad object");
 		} else {
 			// add to global queue
 			QueueObj temp = new QueueObj(thisChar, obj, obj.transform.position, QueueObj.actiontype.pickup);
@@ -582,7 +601,7 @@ public class CharFuncs : MonoBehaviour {
 			} else {
 				rotateToObj = null;
 				workingNum = temp.msgNum;
-				//Debug.Log ("Changed working num in doPickup to "+workingNum+ " for "+thisChar.name);
+				Debug.Log ("Changed working num in doPickup to "+workingNum+ " for "+thisChar.name);
 				shrinking = true;
 				manipObj = obj;
 				pickup = true;
@@ -685,8 +704,15 @@ public class CharFuncs : MonoBehaviour {
 		heading.y = 0;
 		float distance = heading.magnitude;
 		Vector3 direction = heading/distance;
-		float minusamt = 2.8f; // if character object
-		switch (o.name) {
+		float minusamt = 0f; // if not pawn or char object
+		if (GlobalObjs.isPawn(o)) {
+				minusamt = 1.4f;
+		}
+		if (GlobalObjs.isChar (o)) {
+				minusamt = 2.8f;
+		}
+		
+		/*switch (o.name) {
 		case "Lantern":
 		case "Shovel":
 		case "Skull1":
@@ -702,7 +728,7 @@ public class CharFuncs : MonoBehaviour {
 		default:
 			minusamt = 0f;
 			break;
-		}
+		}*/
 		//if (thisChar.name == "GraveDiggerTwo" && o.name == "GraveDigger") {
 		//	Debug.Log ("Position G2="+thisChar.transform.position+" G1="+o.transform.position+" distance="+distance+" direction="+direction+" minusamt="+ minusamt+" postn="+(thisChar.transform.position + (direction *(distance - minusamt))));
 		//}
@@ -801,7 +827,8 @@ public class CharFuncs : MonoBehaviour {
 				}		
 				break;
 			case miniQueueObj.actiontype.pickup:
-				if (pulled.target.name.ToLower() != "skull1" && pulled.target.name.ToLower() != "skull2" && pulled.target.name.ToLower() != "lantern" && pulled.target.name.ToLower () != "shovel") {
+				if (!GlobalObjs.isPawn(pulled.target)) {
+//				if (pulled.target.name.ToLower() != "skull1" && pulled.target.name.ToLower() != "skull2" && pulled.target.name.ToLower() != "lantern" && pulled.target.name.ToLower () != "shovel") {
 					// not valid command - ignore
 					GlobalObjs.removeOne(pulled.msgnum);
 				} else {
@@ -936,6 +963,26 @@ public class CharFuncs : MonoBehaviour {
 	
 	public string compareImportance(CharFuncs other) {
 		// Hamlet is most important, GraveDigger1, GraveDigger2, Horatio
+		int mypriority = 0;
+		int otherpriority = 0;
+		
+		foreach(GameObject g in GlobalObjs.listOfCharObj) {
+			if (g.name == thisChar.name) {
+				mypriority = GlobalObjs.listOfCharObj.IndexOf (g);
+			}
+			if (g.name == other.name) {
+				otherpriority = GlobalObjs.listOfCharObj.IndexOf(g);
+			}
+		}
+		if (mypriority < otherpriority) {
+			return "More";
+		} else if (mypriority > otherpriority) {
+			return "Less";
+		} else {
+			Debug.Log ("Error - invalid priority");
+			return "Other";
+		}
+/*		
 		switch (thisChar.name) {
 			case "Hamlet":
 				return "More";
@@ -966,7 +1013,7 @@ public class CharFuncs : MonoBehaviour {
 			default:
 				return "Other";
 				break;
-		}
+		}*/
 	}
 	
 	public Vector3 getLastMovePostn() {

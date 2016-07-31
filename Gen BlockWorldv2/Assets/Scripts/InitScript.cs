@@ -1,7 +1,4 @@
 using UnityEngine;
-#if UNITY_EDITOR
-using UnityEditor;
-#endif
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
@@ -22,6 +19,7 @@ public class InitScript : MonoBehaviour {
 	public GameObject prefabobj;
 	public GameObject prefabchar;
 	public GameObject prefabmark;
+	//public Material prefabarm;
 	
 	// for mode dropdowns
 	private Vector2 scrollViewVector = Vector2.zero;
@@ -122,12 +120,12 @@ public class InitScript : MonoBehaviour {
 	void Awake() {
 		Instance = this;
 		
-		 #if UNITY_EDITOR
+		/* #if UNITY_EDITOR
             Material m = AssetDatabase.LoadAssetAtPath("Assets/Materials/BLUEMat.mat", typeof(Material)) as Material;
             m = AssetDatabase.LoadAssetAtPath("Assets/Materials/PURPLEMat.mat", typeof(Material)) as Material;
             m = AssetDatabase.LoadAssetAtPath("Assets/Materials/REDMat.mat", typeof(Material)) as Material;
             m = AssetDatabase.LoadAssetAtPath("Assets/Materials/GREENMat.mat", typeof(Material)) as Material;
-			#endif
+			#endif*/
 	}
 	// Use this for initialization
 	void Start () {
@@ -191,7 +189,9 @@ public class InitScript : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
+		
 		if (starting) {
+			
 			timer += Time.deltaTime;
 			if (timer >= timerMax) {
 				// ready to start
@@ -522,7 +522,10 @@ public class InitScript : MonoBehaviour {
 					Debug.Log ("Said something");
 				}*/
 				if (GUI.Button (new Rect(25, 545, 100, 30), "Stop")) {
-					GlobalObjs.HamletFunc.doStopAll();
+					foreach(CharFuncs c in GlobalObjs.listOfChars) {
+						c.doStopAll ();
+					}
+					//GlobalObjs.HamletFunc.doStopAll();
 					Debug.Log ("Stopped everything");
 				}
 /*
@@ -551,12 +554,12 @@ public class InitScript : MonoBehaviour {
 					Debug.Log ("Pointing");
 					GlobalObjs.HamletFunc.doPoint (GlobalObjs.Skull1);
 				}*/
-				if (GUI.Button(new Rect(25, 595, 100, 30), "Check Visible")) {
+				/*if (GUI.Button(new Rect(25, 595, 100, 30), "Check Visible")) {
 					Debug.Log ("Checking if Grave is visible");
 					GlobalObjs.HamletFunc.moveTo = GlobalObjs.Grave.transform.position;
 					Debug.Log ("Grave="+GlobalObjs.Grave.transform.position+", Hamlet="+GlobalObjs.Hamlet.transform.position);
 					Debug.Log (GlobalObjs.HamletFunc.isVisible());
-				}
+				}*/
 /*
 				if (GUI.Button (new Rect(125, 350, 100, 30), "Look at")) {
 					Debug.Log ("Look at Grave");
@@ -570,7 +573,8 @@ public class InitScript : MonoBehaviour {
 					inum = temp.msgNum;
 					GlobalObjs.globalQueue.Add(temp);
 					Debug.Log ("Starting inum="+inum);
-				}/*
+				}
+				/*
 				if (GUI.Button (new Rect(125, 470, 100, 30), "Run Short Version")) {
 					runshort = !runshort;
 					Debug.Log ("Run Short="+runshort);
@@ -648,6 +652,10 @@ public class InitScript : MonoBehaviour {
 		Debug.Log ("Run in mode #"+indexNumber);
 		starting = false;
 		started = true;
+		inputFile = File.OpenText (fullfilelist[scriptindexNumber-1]);
+		Debug.Log ("Filename="+fullfilelist[scriptindexNumber-1]);
+		// make sure a file was loaded and a file was selected for the script
+		
 		// need to add logic to do different actions based on mode chosen!!
 		switch (indexNumber) {
 		case 0: // baseline -- by default if don't choose or if click choose mode
@@ -655,7 +663,7 @@ public class InitScript : MonoBehaviour {
 			mode = playmodes.baseline;
 			newstyle.normal.background = mytexture;
 			newstyle.normal.textColor = Color.black;
-			if (runshort) {
+			/*if (runshort) {
 				inputFile = File.OpenText (miniinputFileName);
 				GlobalObjs.Hamlet.transform.position = new Vector3(4.2f, 0f, 37f);
 				GlobalObjs.Hamlet.transform.rotation = new Quaternion(0f, -1f, 0f, 0f);
@@ -672,13 +680,13 @@ public class InitScript : MonoBehaviour {
 				
 			} else {
 				inputFile = File.OpenText(inputFileName);
-			}
+			}*/
 			break;
 		case 2: // random
 			mode = playmodes.random;
 			newstyle.normal.background = mytexture3;
 			newstyle.normal.textColor = Color.black;
-			if (runshort) {
+			/*if (runshort) {
 				// place chars randomly
 				GlobalObjs.Hamlet.transform.position = new Vector3(-7.9f, 0f, .8f);
 				GlobalObjs.Hamlet.transform.rotation = new Quaternion(0f, -1f, 0f, -1f);
@@ -698,13 +706,13 @@ public class InitScript : MonoBehaviour {
 				inputFile = File.OpenText (minibmlFileName);
 			} else {
 				inputFile = File.OpenText (bmlFileName);
-			}
+			}*/
 			break;
 		case 1: //baseline
 			mode = playmodes.baseline;
 			newstyle.normal.background = mytexture;
 			newstyle.normal.textColor = Color.black;
-			if (runshort) {
+			/*if (runshort) {
 				// place chars
 				GlobalObjs.Hamlet.transform.position = new Vector3(4.2f, 0f, 37f);
 				GlobalObjs.Hamlet.transform.rotation = new Quaternion(0f, -1f, 0f, 0f);
@@ -722,13 +730,13 @@ public class InitScript : MonoBehaviour {
 				inputFile = File.OpenText(miniinputFileName);
 			} else {
 				inputFile = File.OpenText (inputFileName);
-			}
+			}*/
 			break;
 		case 3: // nlp
 			mode = playmodes.nlp;
 			newstyle.normal.background = mytexture2;
 			newstyle.normal.textColor = Color.white;
-			if (runshort) {
+			/*if (runshort) {
 				// place chars
 				GlobalObjs.Hamlet.transform.position = new Vector3(-6.8f, 0f, 42.4f);
 				GlobalObjs.Hamlet.transform.rotation = new Quaternion(0f, .6f, 0f, -.8f);
@@ -746,11 +754,11 @@ public class InitScript : MonoBehaviour {
 				inputFile = File.OpenText(minibmlFileName);
 			} else {
 				inputFile = File.OpenText (bmlFileName);
-			}
+			}*/
 			break;
 		case 4:
 			mode = playmodes.rules;
-			if (runshort) {
+			/*if (runshort) {
 				// place chars
 				GlobalObjs.Hamlet.transform.position = new Vector3(-6.8f, 0f, 42.4f);
 				GlobalObjs.Hamlet.transform.rotation = new Quaternion(0f, .6f, 0f, -.8f);
@@ -768,11 +776,11 @@ public class InitScript : MonoBehaviour {
 				inputFile = File.OpenText(minibmlFileName);
 			} else {
 				inputFile = File.OpenText (bmlFileName);
-			}
+			}*/
 			break;
 		case 5:
 			mode = playmodes.fdg;
-			if (runshort) {
+			/*if (runshort) {
 				// place chars
 				GlobalObjs.Hamlet.transform.position = new Vector3(-6.8f, 0f, 42.4f);
 				GlobalObjs.Hamlet.transform.rotation = new Quaternion(0f, .6f, 0f, -.8f);
@@ -790,20 +798,23 @@ public class InitScript : MonoBehaviour {
 				inputFile = File.OpenText(minibmlFileName);
 			} else {
 				inputFile = File.OpenText (bmlFileName);
-			}
+			}*/
 			break;
 		}
 		// pause
+		//started = true;
 		pausesome ();
 //		callNextStep ();
 	}
 	
 	public static void pausesome() {
+		Debug.Log ("pausing");
 		if (pauseamt >= pausemax) {
-			
+			Debug.Log ("pauseamt enough");
 			callNextStep();
 		} else {
 			pauseamt += Time.deltaTime;
+			//pausesome ();
 		}
 	}
 	
@@ -817,6 +828,7 @@ public class InitScript : MonoBehaviour {
 		while (firstiteration || (curLine != null && parsedLine[0] != "N")) {
 			firstiteration = false;
        		curLine = inputFile.ReadLine ();
+			Debug.Log ("*****"+curLine);
 	        if (curLine != null) {
 	           
 	//            currentMessageNum++;
@@ -875,7 +887,17 @@ public class InitScript : MonoBehaviour {
 					case "PRINT":
 						Debug.Log (Time.time);
 						Debug.Log ("Coordinates:");
-						Debug.Log ("Hamlet="+GlobalObjs.Hamlet.transform.position+","+GlobalObjs.Hamlet.transform.rotation);
+						foreach(GameObject g in GlobalObjs.listOfCharObj) {
+							Debug.Log (g.name+"="+g.transform.position+","+g.transform.rotation);
+							if (g.transform.childCount != 0) {
+								Debug.Log (g.name+" children=");
+								for (int i=0; i< g.transform.childCount; i++) {
+									Debug.Log (g.transform.GetChild(i).name);
+								}
+								Debug.Log ("End "+g.name+" children");
+							}
+						}
+						/*Debug.Log ("Hamlet="+GlobalObjs.Hamlet.transform.position+","+GlobalObjs.Hamlet.transform.rotation);
 						Debug.Log ("Horatio="+GlobalObjs.Horatio.transform.position+","+GlobalObjs.Horatio.transform.rotation);
 						Debug.Log ("GraveDigger="+GlobalObjs.GraveDigger.transform.position+","+GlobalObjs.GraveDigger.transform.rotation);
 						Debug.Log ("GraveDigger2="+GlobalObjs.GraveDiggerTwo.transform.position+","+GlobalObjs.GraveDiggerTwo.transform.rotation);
@@ -906,7 +928,7 @@ public class InitScript : MonoBehaviour {
 								Debug.Log (GlobalObjs.GraveDiggerTwo.transform.GetChild(i).name);
 							}
 							Debug.Log ("End GraveDiggerTwo children");
-						}
+						}*/
 						break;
 	                default:
 	                    // bad command, ignore
@@ -953,9 +975,9 @@ public class InitScript : MonoBehaviour {
 		
 		int objnum;
 		if (whichfunction == 2 || whichfunction == 3) {
-			objnum = UnityEngine.Random.Range(4, 8); // can only pick up or put down one of these objects
+			objnum = UnityEngine.Random.Range(0, GlobalObjs.listOfPawnObj.Count); // can only pick up or put down one of these objects
 		} else {
-			objnum = UnityEngine.Random.Range(0, 18); // which person or object or location to look, rotate or point to
+			objnum = UnityEngine.Random.Range(0, GlobalObjs.listOfAllObj.Count); // which person or object or location to look, rotate or point to
 		}
 		float temp = Mathf.Floor (UnityEngine.Random.Range(0,2)); 
 		bool isobject = (temp == 1)?(true):(false); // whether to use the object or the position for target
@@ -967,7 +989,20 @@ public class InitScript : MonoBehaviour {
 		Debug.Log ("Objnum="+objnum+", whichfunc="+whichfunction+", isobj="+isobject);
 		
 		if (isobject || whichfunction >=2) {
-			switch (objnum) {
+			if (whichfunction ==2 || whichfunction ==3) {
+				whichobj = GlobalObjs.listOfPawnObj[objnum];
+				ischar = false;
+				following = false;
+			} else {
+				whichobj = GlobalObjs.listOfAllObj[objnum];
+				foreach (GameObject g in GlobalObjs.listOfCharObj) {
+					if (g.name == whichobj.name) {
+						ischar = true;
+						break;
+					}
+				}
+			}
+			/*switch (objnum) {
 				case 0:
 					ischar = true;
 					whichobj = GlobalObjs.Hamlet;
@@ -1060,7 +1095,7 @@ public class InitScript : MonoBehaviour {
 					whichobj = null;
 				following = false;
 					break;				
-			}
+			}*/
 		}
 		Debug.Log ("Whichobj="+((whichobj == null)?("NULL"):(whichobj.name)));
 				
@@ -1308,6 +1343,12 @@ public class InitScript : MonoBehaviour {
 			//Debug.Log (curLine);
 			
 			GlobalObjs.priorityList.Capacity = 15;
+			charlist = new GameObject[15];
+			charlisttext = new string[15];
+			targetlist = new GameObject[75];
+			targetlisttext = new string[75];
+			int cindex = 0;
+			int oindex = 0;
 			
 			while (curLine != null) { // read each line
 				parsedLine = curLine.Split ('\t');
@@ -1332,20 +1373,22 @@ public class InitScript : MonoBehaviour {
 						person.name = name;
 						// get charfuncs & fire pickup if objectheld is defined
 						CharFuncs personfunc = (CharFuncs) person.GetComponent (typeof(CharFuncs));
-						if (objectheld != null && objectheld != "null") {
-							GameObject objfound = GlobalObjs.getObject(objectheld);
-							personfunc.doPickup(objfound);
-						}
+						
 						// set voice
 						personfunc.voice = parsedLine[12];
 						// set material
-						foreach(Material myMaterial in  Resources.FindObjectsOfTypeAll(typeof(Material))) {
+					Debug.Log ("x"+parsedLine[10]+"x");
+						personfunc.bodycolor = parsedLine[10];
+						//personfunc.bodycolor = "BoxPersonColorOnly-GREEN";
+/*						foreach(Material myMaterial in  Resources.FindObjectsOfTypeAll(typeof(Material))) {
 				            //Debug.Log ("Material="+myMaterial.name);
 				            if (myMaterial.name == parsedLine[10]) {
-				                person.renderer.material = myMaterial;
-				                //Debug.Log ("Found "+findWhichMaterialmb1);
+				                person.gameObject.renderer.material = myMaterial;
+				                Debug.Log ("Found "+parsedLine[10]);
 				            }
-						}
+						}*/
+					
+						personfunc.armcolor = parsedLine[10].Replace ("Mat", "");
         
 						GlobalObjs.listOfChars.Add (personfunc);
 						GlobalObjs.listOfCharObj.Add(person);
@@ -1361,7 +1404,15 @@ public class InitScript : MonoBehaviour {
 					
 						GlobalObjs.priorityList.Insert(priority, person);
 						//person.gameObject.tag = "Person"; // don't need this?
+					
+						/*if (objectheld != null && objectheld != "null") {
+							GameObject objfound = GlobalObjs.getObject(objectheld);
+							personfunc.doPickup(objfound);
+						}*/ // TODO - fix how to get them to pickup for initialization
 							
+						charlisttext[cindex] = name;
+						charlist[cindex] = person;
+						cindex++;
 						Debug.Log ("Created char="+name);
 						break;
 					case "P":
@@ -1420,6 +1471,9 @@ public class InitScript : MonoBehaviour {
 						GlobalObjs.listOfAllObj.Add (pawn);
 						//pawn.gameObject.tag = "Pawn"; // don't need this?
 						
+						targetlisttext[oindex] = name;
+						targetlist[oindex] = pawn;
+						oindex++;
 						Debug.Log ("Created pawn="+name);
 						break;
 					case "M":
@@ -1434,7 +1488,10 @@ public class InitScript : MonoBehaviour {
 						GlobalObjs.listOfAllObj.Add (mark);
 						//mark.gameObject.tag = "Mark"; // don't need this?
 						mark.renderer.material.color = Color.clear;
-				
+						
+						targetlisttext[oindex] = name;
+						targetlist[oindex] = mark;
+						oindex++;
 						Debug.Log ("Created mark="+name);
 						break;
 					case "S":
@@ -1478,7 +1535,7 @@ public class InitScript : MonoBehaviour {
 				
 				curLine = charfile.ReadLine ();
 			}
-			
+			/*
 			charlist = new GameObject[5];
 			charlist[0] = null;
 			charlist[1] = GlobalObjs.Hamlet;
@@ -1520,9 +1577,12 @@ public class InitScript : MonoBehaviour {
 			for (int i = 1; i < targetlist.Length; i++) {
 				targetlisttext[i] = targetlist[i].name;
 			}
-			
+			*/
 			charfile.Close ();
 			GlobalObjs.priorityList.TrimExcess(); // removes blank areas
+			
+			
+			
 		}
 	}
 	
