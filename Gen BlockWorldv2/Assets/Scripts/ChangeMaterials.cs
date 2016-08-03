@@ -19,6 +19,13 @@ public class ChangeMaterials : MonoBehaviour {
             m = AssetDatabase.LoadAssetAtPath("Assets/Materials/PURPLEMat.mat", typeof(Material)) as Material;
             m = AssetDatabase.LoadAssetAtPath("Assets/Materials/REDMat.mat", typeof(Material)) as Material;
             m = AssetDatabase.LoadAssetAtPath("Assets/Materials/GREENMat.mat", typeof(Material)) as Material;
+			m = AssetDatabase.LoadAssetAtPath("Assets/Materials/BROWNMat.mat", typeof(Material)) as Material;
+			m = AssetDatabase.LoadAssetAtPath("Assets/Materials/CYANMat.mat", typeof(Material)) as Material;
+			m = AssetDatabase.LoadAssetAtPath("Assets/Materials/ORANGEMat.mat", typeof(Material)) as Material;
+			m = AssetDatabase.LoadAssetAtPath("Assets/Materials/PEACHMat.mat", typeof(Material)) as Material;
+			m = AssetDatabase.LoadAssetAtPath("Assets/Materials/PINKMat.mat", typeof(Material)) as Material;
+			m = AssetDatabase.LoadAssetAtPath("Assets/Materials/PURPLEMat.mat", typeof(Material)) as Material;
+			m = AssetDatabase.LoadAssetAtPath ("Assets/Materials/YELLOWMat.mat", typeof(Material)) as Material;
 			#endif
         }
         //Debug.Log("Starting Coloring for "+whichChar+"!!!!");

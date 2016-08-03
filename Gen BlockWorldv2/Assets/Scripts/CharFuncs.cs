@@ -88,6 +88,7 @@ public class CharFuncs : MonoBehaviour {
 		//speechfunc = (SpeechBubble)thisChar.GetComponent(typeof(SpeechBubble));
 		speaking=false;
 		armmat = GlobalObjs.getMaterial(armcolor);
+		Debug.Log ("armcolor="+armcolor);
 		Debug.Log ("voice for "+thisChar.name+" ="+voice+"XX");
 		/*switch(this.name) {
 			case "Hamlet":
@@ -136,6 +137,7 @@ public class CharFuncs : MonoBehaviour {
 	void Update () {
 		if (armmat == null) {
 			armmat = GlobalObjs.getMaterial(armcolor);
+			Debug.Log ("armcolorupdate="+armcolor);
 		}
 		
 		if (thisCharController == null) {
@@ -211,7 +213,7 @@ public class CharFuncs : MonoBehaviour {
 			}
 			
 		} else if (shrinking) {
-			Debug.Log ("SHRINKING!!");
+			//Debug.Log ("SHRINKING!!");
 			// scale char down
 			float samt = Mathf.Min (Time.deltaTime*sspeed, thisChar.transform.localScale.y - halfHeight); // so don't go past 10f shrinking
 			

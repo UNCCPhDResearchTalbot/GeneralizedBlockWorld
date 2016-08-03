@@ -26,6 +26,7 @@ public class GlobalObjs : MonoBehaviour
 	public static List<GameObject> priorityList = new List<GameObject>();
 	
 	public static List<QueueObj> globalQueue = new List<QueueObj>();
+	static bool isfirst = true;
 	
 //	public static Queue<QueueObj> globalQueue = new Queue<QueueObj>();
 	/*public static GameObject Skull1 = null;
@@ -48,6 +49,21 @@ public class GlobalObjs : MonoBehaviour
 	
 	// Use this for initialization
 	void Start () {
+		if (isfirst) {
+			isfirst = false;
+			#if UNITY_EDITOR
+            Material m = AssetDatabase.LoadAssetAtPath("Assets/Materials/BLUEarmmat.mat", typeof(Material)) as Material;
+            m = AssetDatabase.LoadAssetAtPath("Assets/Materials/PURPLEarmmat.mat", typeof(Material)) as Material;
+            m = AssetDatabase.LoadAssetAtPath("Assets/Materials/REDarmmat.mat", typeof(Material)) as Material;
+            m = AssetDatabase.LoadAssetAtPath("Assets/Materials/GREENarmmat.mat", typeof(Material)) as Material;
+			m = AssetDatabase.LoadAssetAtPath("Assets/Materials/BROWNarmmat.mat", typeof(Material)) as Material;
+			m = AssetDatabase.LoadAssetAtPath("Assets/Materials/CYANarmmat.mat", typeof(Material)) as Material;
+			m = AssetDatabase.LoadAssetAtPath("Assets/Materials/ORANGEarmmat.mat", typeof(Material)) as Material;
+			m = AssetDatabase.LoadAssetAtPath("Assets/Materials/PEACHarmmat.mat", typeof(Material)) as Material;
+			m = AssetDatabase.LoadAssetAtPath("Assets/Materials/PINKarmmat.mat", typeof(Material)) as Material;
+			m = AssetDatabase.LoadAssetAtPath("Assets/Materials/YELLOWarmmat.mat", typeof(Material)) as Material;
+			#endif
+		}
 		/*if (Hamlet == null) {
 			templist = GameObject.FindGameObjectsWithTag("Hamlet");
 			Hamlet = templist[0];
@@ -473,10 +489,12 @@ public class GlobalObjs : MonoBehaviour
 		foreach(Material myMaterial in  Resources.FindObjectsOfTypeAll(typeof(Material))) {
             //Debug.Log ("Material="+myMaterial.name);
             if (myMaterial.name == name+"armmat") {
+				Debug.Log ("Found material="+name);
                 return myMaterial;
                 //Debug.Log ("Found "+findWhichMaterialmb1);
             }
         }
+		Debug.Log ("Did not find material="+name);
 		return null;
 	}
 	

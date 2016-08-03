@@ -37,7 +37,7 @@ public class InitScript : MonoBehaviour {
     private static string[] mlist = {"Choose Mode:","Baseline", "Random", "NLP", "Rules", "FDG"};
 	private static string[] filelist = {};
 	private static string[] fullfilelist = {};
-	private static string[] actionlist = {"Choose Action:", "Walk", "Look", "Pickup", "Putdown", "Speak", "Point"};
+	private static string[] actionlist = {"Choose Action:", "Walk", "Look", "Pickup", "Putdown", "Speak", "Point", "WalkToPt", "Print"};
 	private static string[] charlisttext = {};
 	private static string[] targetlisttext = {};
 	private static GameObject[] charlist = {};
@@ -1128,6 +1128,7 @@ public class InitScript : MonoBehaviour {
 					// point
 				who.doPoint(whichobj);
 				break;
+			
 		}
 	}
 	
@@ -1139,6 +1140,10 @@ public class InitScript : MonoBehaviour {
 		float targety = -1;
 		float targetx2 = -1;
 		float targety2 = -1;
+		float targetx3 = -1;
+		float targety3 = -1;
+		float targetx4 = -1;
+		float targety4 = -1;
 		GameObject target = null;
 		bool following = false;
 		
@@ -1153,6 +1158,8 @@ public class InitScript : MonoBehaviour {
 		} else {
 			startPos = xmltxt.IndexOf ("target="+quote);
 		}
+		Debug.Log (xmltxt);
+		Debug.Log ("startPos="+startPos);
 		//Debug.Log ("start="+startPos);
 		//Debug.Log (xmltxt.Substring (startPos));
 		endPos = xmltxt.Substring (startPos+8).IndexOf (quote);
@@ -1171,6 +1178,14 @@ public class InitScript : MonoBehaviour {
 			if (position.Length > 2) {
 				success = float.TryParse(position[2], out targetx2);
 				success = float.TryParse(position[3], out targety2);
+				if (position.Length > 4) {
+					success = float.TryParse (position[4], out targetx3);
+					success = float.TryParse (position[5], out targety3);
+					if (position.Length > 6) {
+						success = float.TryParse(position[6], out targetx4);
+						success = float.TryParse(position[7], out targety4);
+					}
+				}
 			}
 			
 		} else {
@@ -1213,6 +1228,22 @@ public class InitScript : MonoBehaviour {
 						checkUpstaging(who, targetx2, targety2, null, following);
 					} else {
 						who.doWalk (targetx2, targety2, null, following); // this one should get queued
+					}
+					if (targetx3 != -1) {
+						
+						if (mode == playmodes.rules || mode == playmodes.fdg) {
+							checkUpstaging(who, targetx3, targety3, null, following);
+						} else {
+							who.doWalk (targetx3, targety3, null, following); // this one should get queued
+						}
+						
+						if (targetx4 != -1) {
+							if (mode == playmodes.rules || mode == playmodes.fdg) {
+								checkUpstaging(who, targetx4, targety4, null, following);
+							} else {
+								who.doWalk (targetx4, targety4, null, following); // this one should get queued
+							}
+						}
 					}
 				}
 			}
@@ -1374,6 +1405,7 @@ public class InitScript : MonoBehaviour {
 						// get charfuncs & fire pickup if objectheld is defined
 						CharFuncs personfunc = (CharFuncs) person.GetComponent (typeof(CharFuncs));
 						
+						
 						// set voice
 						personfunc.voice = parsedLine[12];
 						// set material
@@ -1387,8 +1419,13 @@ public class InitScript : MonoBehaviour {
 				                Debug.Log ("Found "+parsedLine[10]);
 				            }
 						}*/
-					
+						
 						personfunc.armcolor = parsedLine[10].Replace ("Mat", "");
+						Debug.Log ("y"+personfunc.armcolor+"y");
+						// set myicon variable to image of appropriately colored icon from texture folder
+						personfunc.myicon = (Texture) Resources.LoadAssetAtPath ("Assets/Textures/"+personfunc.armcolor+"icon.tiff", typeof(Texture));
+//        prefab = (GameObject) Resources.LoadAssetAtPath("Assets/Artwork/mymodel.fbx", typeof(GameObject))
+					
         
 						GlobalObjs.listOfChars.Add (personfunc);
 						GlobalObjs.listOfCharObj.Add(person);
@@ -1453,6 +1490,16 @@ public class InitScript : MonoBehaviour {
 							case "Red":
 								pcolor = Color.red;
 								break;
+							case "Purple":
+								pcolor = new Color(76.0f/255.0f, 0.0f/255.0f, 153.0f/255.0f);//76 0 153
+								break;
+							case "Brown":
+								pcolor = new Color(102.0f/255.0f, 51.0f/255.0f, 0.0f/255.0f);
+								break;
+							case "White":
+								pcolor = Color.white;
+								break;
+						
 							default:
 								pcolor = Color.white;
 								break;
@@ -1618,6 +1665,21 @@ public class InitScript : MonoBehaviour {
 			break;
 		case 6:
 			who.doPoint (targetlist[targetindexNumber]);
+			break;
+		case 7:
+			who.doWalk (x, y, null, false);
+			break;
+		case 8:
+			foreach(GameObject g in GlobalObjs.listOfCharObj) {
+				Debug.Log (g.name+"="+g.transform.position+","+g.transform.rotation);
+				if (g.transform.childCount != 0) {
+					Debug.Log (g.name+" children=");
+					for (int i=0; i< g.transform.childCount; i++) {
+						Debug.Log (g.transform.GetChild(i).name);
+					}
+					Debug.Log ("End "+g.name+" children");
+				}
+			}
 			break;
 			
 			
