@@ -34,7 +34,7 @@ public class CharFuncs : MonoBehaviour {
 	public CharFuncs moveToObjFunc;
 	public bool beingfollowed = false;
 	float timer = 0.0f;
-	public static float timerMax = 2.0f;
+	public static float timerMax = 3.0f; // for following delay?
 	bool left = false; // used for pointing on the left vs right side of character
 	Queue<miniQueueObj> genQueue;
 	
@@ -530,6 +530,9 @@ public class CharFuncs : MonoBehaviour {
 		//Debug.Log ("Cleaned said:"+toSay);
 		speaking=true;
 		myProcess = System.Diagnostics.Process.Start ("say", "-v "+voice + " \"" + toSay+"\"");
+		if (!onstage()) {
+			saywhat = "(offstage) "+saywhat;
+		}
 		
 		/*if (InitScript.mode == InitScript.playmodes.rules) {
 			// get everyone else that is onstage to look at this person

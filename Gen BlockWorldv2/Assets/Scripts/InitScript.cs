@@ -84,6 +84,7 @@ public class InitScript : MonoBehaviour {
 	public  Texture skull2T;
 	public  Texture legendBkgrd;
 	
+	public static Texture legendTexture;
 	
 	public float startx1 = 5f;
 	public float startx2 = 110f;
@@ -119,7 +120,9 @@ public class InitScript : MonoBehaviour {
 	
 	void Awake() {
 		Instance = this;
-		
+		WWW www3 = new WWW("file://" + Application.dataPath + "/Textures/blanklegend.png");
+				        //yield return www3;
+				        legendTexture = www3.texture;
 		/* #if UNITY_EDITOR
             Material m = AssetDatabase.LoadAssetAtPath("Assets/Materials/BLUEMat.mat", typeof(Material)) as Material;
             m = AssetDatabase.LoadAssetAtPath("Assets/Materials/PURPLEMat.mat", typeof(Material)) as Material;
@@ -252,12 +255,12 @@ public class InitScript : MonoBehaviour {
 			// legend
 			GUI.BeginGroup(new Rect(1200, -3, 200, 900));
 				GUI.Box (new Rect(0,-3, 200,900), legendBkgrd);
-			
+				GUI.Label (new Rect(10, 50, 200, 900 ), new GUIContent(legendTexture));
 				GUIStyle mystyle = new GUIStyle();
 				mystyle.fontSize = 30;
 				mystyle.normal.textColor = Color.white;
 				GUI.Label (new Rect(20, startx1+20, widthtext*2, heighttext*2), "LEGEND", mystyle);
-			
+			/*
 				GUI.Label (new Rect(startx2, starty, widthtext, heighttext), "Hamlet:");
 				GUI.Label(new Rect(startximg2, startyimg,widthimg,heightimg), new GUIContent(hamletT));
 				
@@ -283,7 +286,7 @@ public class InitScript : MonoBehaviour {
 			
 				GUI.Label (new Rect(startx2, starty+30+(spacing*2.5f), widthtext, heighttext), "Skull 2:");
 				GUI.Label(new Rect(startximg2, startyimg+30+(spacing*2.5f),widthimg,heightimg), new GUIContent(skull2T));
-			
+			*/
 			
 			GUI.EndGroup();
 			//GUI.DrawTexture(new Rect(100,60, 50,50), hamletT, ScaleMode.ScaleToFit, true, 0);
@@ -1572,6 +1575,12 @@ public class InitScript : MonoBehaviour {
 						}
 						
 						Debug.Log ("Set speed="+parsedLine[1]);
+						break;
+					case "T":
+						WWW www3 = new WWW("file://" + Application.dataPath + "/Textures/"+parsedLine[1]);
+				        //yield return www3;
+				        legendTexture = www3.texture;
+						//legendTexture = parsedLine[1];
 						break;
 					default:
 						// nothing

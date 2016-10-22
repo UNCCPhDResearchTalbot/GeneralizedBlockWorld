@@ -57,15 +57,21 @@
      <None Include="Assets\Files\InputFile.txt" />
      <None Include="Assets\Files\KrappCharInit.txt" />
      <None Include="Assets\Files\NoisesBaselineBML.txt" />
+     <None Include="Assets\Files\tartuffe-myhandmapped.txt" />
      <None Include="Assets\Files\CherryBaselineBML.txt" />
      <None Include="Assets\Files\NoisesCharInit.txt" />
      <None Include="Assets\Files\ErnestCharInit.txt" />
      <None Include="Assets\Files\TartuffeCharInit.txt" />
+     <None Include="Assets\Files\GenericCharInit.txt" />
      <None Include="Assets\Files\miniBMLFile.txt" />
+     <None Include="Assets\Files\KEEP-TartuffeNLP.txt" />
+     <None Include="Assets\Files\CherryBaselineBML2 823.txt" />
      <None Include="Assets\Files\CherryCharInit.txt" />
+     <None Include="Assets\Files\CherryBaselineBML2.txt" />
      <None Include="Assets\Files\DOSCharInit.txt" />
      <None Include="Assets\Files\HamletCharInit.txt" />
      <None Include="Assets\Files\miniInputFile.txt" />
+     <None Include="Assets\Files\KEEP-OrchardNLP.txt" />
      <None Include="Assets\Files\ErnestBaselineBML.txt" />
      <None Include="Assets\Files\BMLFile.txt" />
   </ItemGroup>
